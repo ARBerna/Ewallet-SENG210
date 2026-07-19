@@ -1,0 +1,18 @@
+Total expenses: 2500.0
+Total yearly income: 2500.0
+Total January income: 500.0
+Total February income: 1200.0
+Total March income: 800.0
+Total April income: 0.0
+Total May income: 0.0
+Total June income: 0.0
+Total July income: 0.0
+Total August income: 0.0
+Total September income: 0.0
+Total October income: 0.0
+Total November income: 0.0
+Total December income: 0.0
+Individual Incomes:
+ 1. Amount: 800.0, Month: March, Source: Side Work
+ 2. Amount: 1200.0, Month: February, Source: Job B
+ 3. Amount: 500.0, Month: January, Source: Job A
