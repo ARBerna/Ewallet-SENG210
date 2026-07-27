@@ -179,7 +179,7 @@ public class PrintExpenseReport extends JFrame implements ActionListener{
 		
 		//make summary
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 485);
 		ExpenseReportPanel = new JPanel();
 		ExpenseReportPanel.setBackground(new Color(236, 70, 47));
@@ -301,7 +301,7 @@ public class PrintExpenseReport extends JFrame implements ActionListener{
 			SummaryText.setText(getSummary(actionU, freqInt, (String) SourceComboBox.getSelectedItem()));
 		}
 		else {
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)); //close window
+			this.dispose(); 
 			return;
 		}
 	}

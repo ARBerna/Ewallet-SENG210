@@ -238,7 +238,7 @@ public class addMonthlyIncome extends JFrame implements ActionListener {
 		bodyPanel.add(confirmButton);
 		confirmButton.addActionListener(this);
 
-		setVisible(true);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class addMonthlyIncome extends JFrame implements ActionListener {
 			userObject.addWage(wageObject);
 			updateMonthlySavings.updateSavings(userObject);
 			
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)); //close window
+			this.dispose();
 			return;
 		}
 		

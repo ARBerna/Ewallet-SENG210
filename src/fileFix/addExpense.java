@@ -228,7 +228,7 @@ public class addExpense extends JFrame implements ActionListener {
 		bodyPanel.add(confirmButton);
 		confirmButton.addActionListener(this);
 
-		setVisible(true);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	@Override
@@ -259,7 +259,7 @@ public class addExpense extends JFrame implements ActionListener {
 			//update savings
 			updateMonthlySavings.updateSavings(userObject);
 			
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)); //close window
+			this.dispose();
 			return;
 		}
 		
