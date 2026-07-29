@@ -46,4 +46,8 @@ public class User {
 	public void addExpense(Expense e) {
 		Spending.add(e);
 	}
+	
+	public String getPassword() {
+		return this.pwd;
+	}
 }

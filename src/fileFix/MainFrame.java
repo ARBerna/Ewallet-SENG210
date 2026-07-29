@@ -9,9 +9,10 @@ public class MainFrame extends JFrame {
 
 	public User actionU;
 
-	public MainFrame() {
+	public MainFrame(User authenticatedUser) {
 
 		// addeder here for a demo user as hardcoded
+		this.actionU = authenticatedUser;
 		actionU = new User("test", "123");
 
 		actionU.addWage(new Wage("Job A", 500, "January"));
@@ -88,14 +89,26 @@ public class MainFrame extends JFrame {
 
 	public static void main(String[] args) {
 		
-		SwingUtilities.invokeLater(() -> {
-			try {
-				new MainFrame().setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		
-
+	    SwingUtilities.invokeLater(() -> {
+	        try {
+	            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	            
+	            // Start the Authentication Dialog 
+	            AuthDialog auth = new AuthDialog(null);
+	            auth.setVisible(true); 
+	            
+	            //Read validated authenticated user object
+	            User verifiedUser = auth.getAuthenticatedUser();
+	            
+	            if (verifiedUser != null) {
+	                MainFrame frame = new MainFrame(verifiedUser);
+	                frame.setVisible(true);
+	            } else {
+	                System.exit(0); 
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    });
 	}
 }
