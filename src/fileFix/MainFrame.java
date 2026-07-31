@@ -9,9 +9,10 @@ public class MainFrame extends JFrame {
 
 	public User actionU;
 
-	public MainFrame() {
+	public MainFrame(User authenticatedUser) {
 
 		// addeder here for a demo user as hardcoded
+		this.actionU = authenticatedUser;
 		actionU = new User("test", "123");
 
 		actionU.addWage(new Wage("Job A", 500, "January"));
@@ -39,43 +40,42 @@ public class MainFrame extends JFrame {
 
 		JButton addExpenseButton = new JButton("Add Expense");
 
-		savingBtn.addActionListener(e -> {
-			new SavingCalcFrame();
-		});
+		 savingBtn.addActionListener(e -> {
+	            SwingUtilities.invokeLater(SavingCalcFrame::new);
+	        });
 
-		currencyConversion.addActionListener(e -> {
-			new CurrencyConversionFrame();
-		});
+	        currencyConversion.addActionListener(e -> {
+	            SwingUtilities.invokeLater(CurrencyConversionFrame::new);
+	        });
 
-		incomeReportButton.addActionListener(e -> {
-			SwingUtilities.invokeLater(() -> {
-				new PrintIncomeReport(actionU).setVisible(true); // foced open was not showing
-			});
-		});
+	        incomeReportButton.addActionListener(e -> {
+	            SwingUtilities.invokeLater(() -> new PrintIncomeReport(actionU).setVisible(true));
+	        });
 
-		exportIncomeButton.addActionListener(e -> {
+	        exportIncomeButton.addActionListener(e -> {
+	            String report = PrintIncomeReport.getSummary(actionU, "All", "All");
+	            ReportExporter.exportTextToFile(report, "income_report.txt");
+	        });
 
-			String report = PrintIncomeReport.getSummary(actionU, "All", "All");
+	        expenseReportButton.addActionListener(e -> {
+	            SwingUtilities.invokeLater(() -> new PrintExpenseReport(actionU).setVisible(true));
+	        });
 
-			ReportExporter.exportTextToFile(report, "income_report.txt");
-		});
-
-		expenseReportButton.addActionListener(e -> {
-
-			SwingUtilities.invokeLater(() -> {
-				new PrintExpenseReport(actionU).setVisible(true); // forced again
-			});
-		});
-
-		addMonthlyIncomeButton.addActionListener(e -> {
-			Wage w = new Wage("", 0.0, ""); // had to add this empty
-			new addMonthlyIncome(actionU, w);
-		});
-		
-		addExpenseButton.addActionListener( e -> {
-			Expense exp = new Expense("", 0, 1); // another empty
-			new addExpense(actionU, exp); //should open frame now
-		});
+	        addMonthlyIncomeButton.addActionListener(e -> {
+	            SwingUtilities.invokeLater(() -> {
+	                Wage w = new Wage("", 0.0, ""); 
+	                addMonthlyIncome incomeFrame = new addMonthlyIncome(actionU, w);
+	                incomeFrame.setVisible(true); 
+	            });
+	        });
+	        
+	        addExpenseButton.addActionListener(e -> {
+	            SwingUtilities.invokeLater(() -> {
+	                Expense exp = new Expense("", 0, 1); 
+	                addExpense expenseFrame = new addExpense(actionU, exp);
+	                expenseFrame.setVisible(true); 
+	            });
+	        });
 		
 		add(addExpenseButton);
 		add(addMonthlyIncomeButton);
@@ -88,7 +88,27 @@ public class MainFrame extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new MainFrame();
-
+		
+	    SwingUtilities.invokeLater(() -> {
+	        try {
+	            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	            
+	            // Start the Authentication Dialog 
+	            AuthDialog auth = new AuthDialog(null);
+	            auth.setVisible(true); 
+	            
+	            //Read validated authenticated user object
+	            User verifiedUser = auth.getAuthenticatedUser();
+	            
+	            if (verifiedUser != null) {
+	                MainFrame frame = new MainFrame(verifiedUser);
+	                frame.setVisible(true);
+	            } else {
+	                System.exit(0); 
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    });
 	}
 }

@@ -218,7 +218,7 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 		
 		//make summary
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
 		setBounds(100, 100, 450, 485);
 		IncomeReportPanel = new JPanel();
 		IncomeReportPanel.setBackground(new Color(236, 70, 47));
@@ -323,7 +323,7 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 			SummaryText.setText(getSummary(actionU, (String) MonthComboBox.getSelectedItem(), (String) SourceComboBox.getSelectedItem()));
 		}
 		else {
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)); //close window
+			this.dispose();
 			return;
 		}
 	}
