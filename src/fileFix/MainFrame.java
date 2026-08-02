@@ -13,7 +13,6 @@ public class MainFrame extends JFrame {
 
 		// addeder here for a demo user as hardcoded
 		this.actionU = authenticatedUser;
-		actionU = new User("test", "123");
 
 		actionU.addWage(new Wage("Job A", 500, "January"));
 		actionU.addWage(new Wage("Job B", 1200, "February"));
