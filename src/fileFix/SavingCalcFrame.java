@@ -2,16 +2,37 @@ package fileFix;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.UUID;
 
 public class SavingCalcFrame extends JFrame {
 		
 	private JTextField itemField;
 	private JSpinner priceSpinner;
+	private DefaultListModel<PlannedPurchase> listModel;
+	private JList<PlannedPurchase> purchaseJList;
+	private JButton saveButton;
+	private PlannedPurchase selectedPurchase = null;
+
+	private static class PlannedPurchase {
+		String id = UUID.randomUUID().toString();
+		String name;
+		double price;
+
+		PlannedPurchase(String name, double price) {
+			this.name = name;
+			this.price = price;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s - $%.2f", name, price);
+		}
+	}
 	
 	public SavingCalcFrame() {
 		
 		setTitle("Savings Calculator");
-		setSize(450, 250);
+		setSize(700, 320); // Expanded frame width & height view layout
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -25,6 +46,7 @@ public class SavingCalcFrame extends JFrame {
 		titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		titleLabel.setFont(new Font("Zilla Slab", Font.BOLD, 28));
 		titleLabel.setForeground(new Color(236, 70, 47));
+		titlePanel.add(titleLabel); // Fixed missing structural layout add
 		
 		//border panel
 		JPanel borderPanel = new JPanel();
@@ -54,18 +76,52 @@ public class SavingCalcFrame extends JFrame {
 		priceSpinner.setBounds(90, 50, 150, 25);
 		bodyPanel.add(priceSpinner);
 		
-		//Calculate button
+		//Calculate button layout
 		JButton calcButton = new JButton("Calculate");
-		calcButton.setBounds(260, 30, 120, 35);
+		calcButton.setBounds(10, 100, 110, 35);
 		calcButton.setBackground(Color.BLACK);
 		calcButton.setForeground(new Color(236, 70, 47));
 		bodyPanel.add(calcButton);
 		
+		//Save/Add Button (Create/Update feature)
+		saveButton = new JButton("Save Plan");
+		saveButton.setBounds(130, 100, 110, 35);
+		saveButton.setBackground(Color.BLACK);
+		saveButton.setForeground(new Color(236, 70, 47));
+		bodyPanel.add(saveButton);
+
+		// List view block 
+		JLabel listHeaderLabel = new JLabel("Planned Purchases:");
+		listHeaderLabel.setBounds(270, 15, 180, 25);
+		listHeaderLabel.setFont(new Font("Arial", Font.BOLD, 14));
+		listHeaderLabel.setForeground(Color.WHITE);
+		bodyPanel.add(listHeaderLabel);
+
+		listModel = new DefaultListModel<>();
+		purchaseJList = new JList<>(listModel);
+		purchaseJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		JScrollPane scrollPane = new JScrollPane(purchaseJList);
+		scrollPane.setBounds(270, 45, 390, 120);
+		bodyPanel.add(scrollPane);
+
+		// Modify/Delete layout
+		JButton updateButton = new JButton("Modify");
+		updateButton.setBounds(440, 175, 100, 30);
+		updateButton.setBackground(Color.BLACK);
+		updateButton.setForeground(new Color(236, 70, 47));
+		bodyPanel.add(updateButton);
+
+		JButton deleteButton = new JButton("Delete");
+		deleteButton.setBounds(560, 175, 100, 30);
+		deleteButton.setBackground(Color.BLACK);
+		deleteButton.setForeground(new Color(236, 70, 47));
+		bodyPanel.add(deleteButton);
 		
 		//messgaedialog for button action
 		calcButton.addActionListener(e -> {
 			double price = (double) priceSpinner.getValue();
-			double monthlySaving = 500.0; //Hardcode - get from system in integration
+			double monthlySaving = 500.0; //Hardcode amount
 			String item = itemField.getText();
 			
 			//validate before calculating
@@ -81,6 +137,60 @@ public class SavingCalcFrame extends JFrame {
 			
 			JOptionPane.showMessageDialog(this, "Item: " + item + "\nPrice: $" + price + "\nMonthly Savings: $" + monthlySaving + "\n\nYou will need " + result + " months to afford this.", "Savings Result", JOptionPane.INFORMATION_MESSAGE);
 			
+		});
+
+		// CREATE & UPDATE execution flow
+		saveButton.addActionListener(e -> {
+			String name = itemField.getText().trim();
+			double price = (double) priceSpinner.getValue();
+
+			if (name.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Item name cannot be empty.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+
+			if (selectedPurchase == null) {
+				listModel.addElement(new PlannedPurchase(name, price));
+			} else {
+				selectedPurchase.name = name;
+				selectedPurchase.price = price;
+				purchaseJList.repaint();
+				selectedPurchase = null;
+				saveButton.setText("Save Plan");
+			}
+			itemField.setText("");
+			priceSpinner.setValue(0.0);
+		});
+
+		// READ & PRE-POPULATE execution flow
+		updateButton.addActionListener(e -> {
+			PlannedPurchase selected = purchaseJList.getSelectedValue();
+			if (selected == null) {
+				JOptionPane.showMessageDialog(this, "Please select an item from the list to modify.", "No Selection", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			selectedPurchase = selected;
+			itemField.setText(selected.name);
+			priceSpinner.setValue(selected.price);
+			saveButton.setText("Update Plan");
+		});
+
+		// DELETE execution flow
+		deleteButton.addActionListener(e -> {
+			int selectedIndex = purchaseJList.getSelectedIndex();
+			if (selectedIndex == -1) {
+				JOptionPane.showMessageDialog(this, "Please select an item to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			PlannedPurchase selected = listModel.get(selectedIndex);
+			if (selectedPurchase != null && selectedPurchase.id.equals(selected.id)) {
+				selectedPurchase = null;
+				saveButton.setText("Save Plan");
+				itemField.setText("");
+				priceSpinner.setValue(0.0);
+			}
+			listModel.remove(selectedIndex);
 		});
 		
 		add(titlePanel, BorderLayout.NORTH);
