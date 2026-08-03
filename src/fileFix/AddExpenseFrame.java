@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
-public class addExpense extends JFrame implements ActionListener {
+public class AddExpenseFrame extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,7 +38,7 @@ public class addExpense extends JFrame implements ActionListener {
     Expense expenseObject;
     User userObject;
 
-    public addExpense(User u, Expense E) {
+    public AddExpenseFrame(User u, Expense E) {
 
         setUndecorated(true);
         setResizable(false);

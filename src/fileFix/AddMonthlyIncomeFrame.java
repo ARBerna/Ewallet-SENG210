@@ -32,7 +32,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JButton;
 
-public class addMonthlyIncome extends JFrame implements ActionListener {
+public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 
 	//create ui objects
 	JPanel    titlePanel;
@@ -59,7 +59,7 @@ public class addMonthlyIncome extends JFrame implements ActionListener {
 	/**
 	 * Create the frame.
 	 */
-	public addMonthlyIncome(User u, Wage w) {
+	public AddMonthlyIncomeFrame(User u, Wage w) {
 		
 		
 		

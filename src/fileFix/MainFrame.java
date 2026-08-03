@@ -56,7 +56,7 @@ public class MainFrame extends JFrame {
         addMonthlyIncomeButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
                 Wage w = new Wage("", 0.0, "");
-                addMonthlyIncome incomeFrame = new addMonthlyIncome(actionU, w);
+                AddMonthlyIncomeFrame incomeFrame = new AddMonthlyIncomeFrame(actionU, w);
                 incomeFrame.setVisible(true);
             });
         });
@@ -64,7 +64,7 @@ public class MainFrame extends JFrame {
         addExpenseButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
                 Expense exp = new Expense("", 0, 1);
-                addExpense expenseFrame = new addExpense(actionU, exp);
+                AddExpenseFrame expenseFrame = new AddExpenseFrame(actionU, exp);
                 expenseFrame.setVisible(true);
             });
         });
