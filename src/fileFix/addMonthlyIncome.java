@@ -14,10 +14,13 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
+
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
 import java.awt.BorderLayout;
@@ -61,7 +64,7 @@ public class addMonthlyIncome extends JFrame implements ActionListener {
 	 */
 	public addMonthlyIncome(User u, Wage w) {
 		//setUndecorated(true);
-		//setResizable(false);
+		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 431, 190);
 		addIncomePanel = new JPanel();
@@ -71,7 +74,7 @@ public class addMonthlyIncome extends JFrame implements ActionListener {
 		
 		userObject = u;
 		wageObject = w;
-		
+        
 		//setup month array
 		String[] monthArray = new String[12];
 		monthArray[0]  = "January";
