@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
@@ -62,7 +63,7 @@ public class addExpense extends JFrame implements ActionListener {
 	 */
 	public addExpense(User u, Expense E) {
 		//setUndecorated(true);
-		//setResizable(false);
+		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 431, 190);
 		addExpensePanel = new JPanel();
@@ -228,6 +229,16 @@ public class addExpense extends JFrame implements ActionListener {
 		bodyPanel.add(confirmButton);
 		confirmButton.addActionListener(this);
 
+		java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		System.out.println("Icon URL: " + iconURL);
+
+		if (iconURL != null) {
+		    ImageIcon icon = new ImageIcon(iconURL);
+		    setIconImage(icon.getImage());
+		} else {
+		    System.out.println("Icon not found");
+		}
+		
 		setVisible(true);
 	}
 	
