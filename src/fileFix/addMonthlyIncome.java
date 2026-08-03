@@ -60,11 +60,8 @@ public class addMonthlyIncome extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	public addMonthlyIncome(User u, Wage w) {
-		
-		
-		
-		setUndecorated(true);
-		setResizable(false);
+		//setUndecorated(true);
+		//setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 431, 190);
 		addIncomePanel = new JPanel();
