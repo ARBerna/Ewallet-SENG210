@@ -4,6 +4,7 @@ import javax.swing.*;
 
 
 import java.awt.*;
+import java.net.URL;
 
 public class MainFrame extends JFrame {
 
@@ -84,7 +85,18 @@ public class MainFrame extends JFrame {
 		add(incomeReportButton);
 		add(currencyConversion);
 		add(savingBtn);
-		setVisible(true);
+
+		java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		System.out.println("Icon URL: " + iconURL);
+
+		if (iconURL != null) {
+		    ImageIcon icon = new ImageIcon(iconURL);
+		    setIconImage(icon.getImage());
+		} else {
+		    System.out.println("Icon not found");
+		}
+        
+        setVisible(true);
 	}
 
 	public static void main(String[] args) {
