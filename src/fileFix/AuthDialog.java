@@ -50,6 +50,16 @@ public class AuthDialog extends JDialog {
 
         btnAction.addActionListener(e -> handleAuth());
         btnToggle.addActionListener(e -> toggleMode());
+        
+        java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		System.out.println("Icon URL: " + iconURL);
+
+		if (iconURL != null) {
+		    ImageIcon icon = new ImageIcon(iconURL);
+		    setIconImage(icon.getImage());
+		} else {
+		    System.out.println("Icon not found");
+		}
     }
 
     private void toggleMode() {
