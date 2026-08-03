@@ -6,6 +6,7 @@ public class Expense {
 	double amount;
 	int yearlyfrequency; //1 for 1 time or once a year, 12 for monthly or or 24 for biweekly
 	//should add contructor(s)
+	String description;
 	
 	public Expense(String tempSource, double tempAmount, int tempYearlyFrequency) {
 		this.source			= tempSource;

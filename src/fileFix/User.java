@@ -5,6 +5,7 @@ public class User {
 	private ArrayList <Currency>currencyRates = new ArrayList<Currency>();
 	private ArrayList <Wage>Income            = new ArrayList<Wage>();     // user income sources that user can record or view or search by type or month 
 	private ArrayList <Expense>Spending       = new ArrayList<Expense>();  //user's expenses 
+	int userID;
 	String username;
 	String pwd;
 	//current total income - total 
@@ -12,11 +13,14 @@ public class User {
 	// possible monthly savings, calculated using monthly income (most recent) assuming the data we have is for one year, and monthly and biweekly expenses, here you can assume yearly expenses that are recorded have already been paid. 
 	double monthlysavings;	
 	//should add constructor(s)
-	public User(String username,String password){
-		this.username = username;
-		this.pwd      = password;
-	}
 	
+	public User(int userID, String username, String passwordHash) {
+		// TODO Auto-generated constructor stub
+		this.userID = userID;
+		this.username = username;
+		this.pwd = passwordHash;
+	}
+
 	//get the most recently input wage
 	public Wage getRecentWage() {
 		if (Income.size() > 0) {

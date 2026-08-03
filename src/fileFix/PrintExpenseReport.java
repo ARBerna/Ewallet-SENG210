@@ -57,15 +57,15 @@ public class PrintExpenseReport extends JFrame implements ActionListener{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					User u = new User("User", "Pass");
+					//User u = new User("User", "Pass");
 					Expense expense = new Expense("test", 10.0, 1);
-					u.addExpense(expense);
+					//u.addExpense(expense);
 					Expense expense2 = new Expense("test1", 11.0, 12);
-					u.addExpense(expense2);
+					//u.addExpense(expense2);
 					Expense expense3 = new Expense("test2", 10.5, 24);
-					u.addExpense(expense3);
-					PrintExpenseReport frame = new PrintExpenseReport(u);
-					frame.setVisible(true);
+					//u.addExpense(expense3);
+					//PrintExpenseReport frame = new PrintExpenseReport(u);
+					//frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -2,6 +2,9 @@ package fileFix;
 
 import javax.swing.*;
 import java.awt.*;
+import fileFix.User;
+import fileFix.DatabaseUser;
+import fileFix.UserDAO;
 
 public class AuthDialog extends JDialog {
 
@@ -74,9 +77,14 @@ public class AuthDialog extends JDialog {
             if (UserDAO.validateLogin(username, password)) {
                 DatabaseUser dbUser = UserDAO.getUserByUsername(username);
 
-                User guiUser = new User(dbUser.getUsername(), dbUser.getPasswordHash());
-                this.authenticatedUser = guiUser;
+                // ⭐ FIXED: Pass userID into the GUI User object
+                User guiUser = new User(
+                    dbUser.getUserID(),
+                    dbUser.getUsername(),
+                    dbUser.getPasswordHash()
+                );
 
+                this.authenticatedUser = guiUser;
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid credentials.", "Auth Failed", JOptionPane.ERROR_MESSAGE);
