@@ -40,7 +40,7 @@ public class AddExpenseFrame extends JFrame implements ActionListener {
 
     public AddExpenseFrame(User u, Expense E) {
 
-        setUndecorated(true);
+        //setUndecorated(true);
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -169,6 +169,16 @@ public class AddExpenseFrame extends JFrame implements ActionListener {
         confirmButton.setFont(new Font("Roboto Medium", Font.BOLD, 16));
         confirmButton.addActionListener(this);
         bodyPanel.add(confirmButton);
+        
+        java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		System.out.println("Icon URL: " + iconURL);
+
+		if (iconURL != null) {
+		    ImageIcon icon = new ImageIcon(iconURL);
+		    setIconImage(icon.getImage());
+		} else {
+		    System.out.println("Icon not found");
+		}
     }
 
     @Override

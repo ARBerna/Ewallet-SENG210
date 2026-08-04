@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
@@ -59,11 +60,10 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 	/**
 	 * Create the frame.
 	 */
-	public AddMonthlyIncomeFrame(User u, Wage w) {
-		
-		
-		
-		setUndecorated(true);
+	public AddMonthlyIncomeFrame(User u, Wage w) 
+	{
+
+		//setUndecorated(true);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 431, 190);
@@ -239,6 +239,16 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		confirmButton.addActionListener(this);
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		System.out.println("Icon URL: " + iconURL);
+
+		if (iconURL != null) {
+		    ImageIcon icon = new ImageIcon(iconURL);
+		    setIconImage(icon.getImage());
+		} else {
+		    System.out.println("Icon not found");
+		}
 	}
 
 	@Override
