@@ -19,6 +19,7 @@ import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.SystemColor;
 import javax.swing.UIManager;
@@ -315,6 +316,16 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 		ExitButton.setBounds(138, 403, 157, 32);
 		IncomeReportPanel.add(ExitButton);
 
+		java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		System.out.println("Icon URL: " + iconURL);
+
+		if (iconURL != null) {
+		    ImageIcon icon = new ImageIcon(iconURL);
+		    setIconImage(icon.getImage());
+		} else {
+		    System.out.println("Icon not found");
+		}
+		
 	}
 	
 	public void actionPerformed(ActionEvent e) {

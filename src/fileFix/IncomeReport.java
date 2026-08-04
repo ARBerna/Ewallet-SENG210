@@ -7,22 +7,18 @@ public class IncomeReport {
 	int i;
 	
 	
-	public IncomeReport() {
-	double total = 0;
-	
-	System.out.println("Report\n");
-	
-	for (i = 0; i < incomeAmounts.length; ++i) {
-		System.out.println("Amount: " + incomeAmounts[i] + ", Month: " + months[i] + ", Source: " + sourseIncome[i]);
-		total += incomeAmounts[i];
+	public IncomeReport() 
+	{
+		double total = 0;
 		
+		System.out.println("Report\n");
+		
+		for (i = 0; i < incomeAmounts.length; ++i) 
+		{
+			System.out.println("Amount: " + incomeAmounts[i] + ", Month: " + months[i] + ", Source: " + sourseIncome[i]);
+			total += incomeAmounts[i];
+			
+		}
+			System.out.println("Total: " + total); 
 	}
-	
-System.out.println("Total: " + total); 
-	}
-	public static void main(String[] args) {
-		new IncomeReport();
-
-}
-
 }
