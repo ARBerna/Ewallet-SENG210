@@ -209,10 +209,10 @@ public class AddExpenseFrame extends JFrame implements ActionListener {
 
             
         	int response = JOptionPane.showConfirmDialog(
-        		    null,           // parent frame/component (can be null)
-        		    "Are you sure you want to submit this expense?",  // message
-        		    "Confirm Submission",        // dialog title
-        		    JOptionPane.YES_NO_OPTION  // button options
+        		    null,           
+        		    "Are you sure you want to submit this expense?",  
+        		    "Confirm Submission",       
+        		    JOptionPane.YES_NO_OPTION
         		);
 
         		if (response == JOptionPane.YES_OPTION) 

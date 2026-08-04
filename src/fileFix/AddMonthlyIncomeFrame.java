@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -249,18 +250,31 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)); //close window
 			return;
 		}
-		else if (e.getSource() == confirmButton) {
-			//update wage object
-			wageObject.amount = (double) amountSpinner.getValue();
-			wageObject.Month  = (String) monthCombo.getSelectedItem();
-			wageObject.source = sourceText.getText();
+		else if (e.getSource() == confirmButton) 
+		{
+			
+			
+			int response = JOptionPane.showConfirmDialog(
+				    null,         
+				    "Are you sure you want to submit this Income?",  
+        		    "Confirm Submission",
+				    JOptionPane.YES_NO_OPTION  // button options
+				);
 
-			//update user object
-			userObject.addWage(wageObject);
-			updateMonthlySavings.updateSavings(userObject);
+				if (response == JOptionPane.YES_OPTION) 
+				{
+					//update wage object
+					wageObject.amount = (double) amountSpinner.getValue();
+					wageObject.Month  = (String) monthCombo.getSelectedItem();
+					wageObject.source = sourceText.getText();
 
-			this.dispose();
-			return;
+					//update user object
+					userObject.addWage(wageObject);
+					updateMonthlySavings.updateSavings(userObject);
+
+					this.dispose();
+					return;
+				}
 		}
 
 	}
