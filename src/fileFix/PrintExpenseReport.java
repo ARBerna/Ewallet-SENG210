@@ -270,7 +270,7 @@ public class PrintExpenseReport extends JFrame implements ActionListener{
 		ExitButton.setBounds(138, 403, 157, 32);
 		ExpenseReportPanel.add(ExitButton);
 
-		java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		java.net.URL iconURL = getClass().getResource("modified-noun-purse-3362985.png");
 		System.out.println("Icon URL: " + iconURL);
 
 		if (iconURL != null) {

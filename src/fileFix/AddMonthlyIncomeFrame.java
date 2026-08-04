@@ -232,7 +232,7 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+		java.net.URL iconURL = getClass().getResource("modified-noun-purse-3362985.png");
 		System.out.println("Icon URL: " + iconURL);
 
 		if (iconURL != null) {

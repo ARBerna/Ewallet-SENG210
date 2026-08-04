@@ -3,6 +3,7 @@ package src.fileFix;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -90,7 +91,15 @@ public class CurrencyConversionFrame extends JFrame {
 
 	add(bodyPanel, BorderLayout.CENTER);
 
+	java.net.URL iconURL = getClass().getResource("modified-noun-purse-3362985.png");
+	System.out.println("Icon URL: " + iconURL);
 
+	if (iconURL != null) {
+	    ImageIcon icon = new ImageIcon(iconURL);
+	    setIconImage(icon.getImage());
+	} else {
+	    System.out.println("Icon not found");
+	}
 
 	setVisible(true);
 

@@ -185,7 +185,7 @@ public class AddExpenseFrame extends JFrame implements ActionListener {
         confirmButton.addActionListener(this);
         bodyPanel.add(confirmButton);
 
-        java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+        java.net.URL iconURL = getClass().getResource("modified-noun-purse-3362985.png");
 		System.out.println("Icon URL: " + iconURL);
 
 		if (iconURL != null) {
