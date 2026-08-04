@@ -1,6 +1,6 @@
-package fileFix;
+package src.fileFix;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 
 public class SwingTest {
 	public static void main(String[] args) {

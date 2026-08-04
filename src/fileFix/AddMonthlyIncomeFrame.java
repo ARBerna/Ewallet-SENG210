@@ -1,37 +1,29 @@
-package fileFix;
+package src.fileFix;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.BoxLayout;
 import java.awt.Color;
-import javax.swing.JLabel;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import javax.swing.SwingConstants;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
-import java.awt.FlowLayout;
-import java.awt.CardLayout;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import javax.swing.SpringLayout;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JSpinner;
-import java.awt.Dimension;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 
 public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 
@@ -60,21 +52,21 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 	/**
 	 * Create the frame.
 	 */
-	public AddMonthlyIncomeFrame(User u, Wage w) 
+	public AddMonthlyIncomeFrame(User u, Wage w)
 	{
 
 		//setUndecorated(true);
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 431, 190);
 		addIncomePanel = new JPanel();
 		addIncomePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(addIncomePanel);
 		addIncomePanel.setLayout(null);
-		
+
 		userObject = u;
 		wageObject = w;
-		
+
 		//setup month array
 		String[] monthArray = new String[12];
 		monthArray[0]  = "January";
@@ -89,20 +81,20 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		monthArray[9]  = "October";
 		monthArray[10] = "November";
 		monthArray[11] = "December";
-		
+
 		//title panel
 		titlePanel = new JPanel();
 		titlePanel.setBounds(0, 5, 431, 56);
 		titlePanel.setBackground(new Color(0, 0, 0));
 		addIncomePanel.add(titlePanel);
-		
+
 		//title label
 		titleLabel = new JLabel(" Add Monthly Income");
 		titleLabel.setBounds(0, 0, 421, 46);
 		titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		titleLabel.setFont(new Font("Zilla Slab", Font.BOLD, 28));
 		titleLabel.setForeground(new Color(236, 70, 47));
-		
+
 		//border panel
 		borderPanel = new JPanel();
 		borderPanel.setBackground(new Color(165, 27, 37));
@@ -120,7 +112,7 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		titlePanel.setLayout(null);
 		titlePanel.add(titleLabel);
 		titlePanel.add(borderPanel);
-		
+
 		//body panel
 		bodyPanel = new JPanel();
 		bodyPanel.setBackground(new Color(236, 70, 47));
@@ -128,7 +120,7 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		addIncomePanel.add(bodyPanel);
 		SpringLayout sl_bodyPanel = new SpringLayout();
 		bodyPanel.setLayout(sl_bodyPanel);
-		
+
 		//inputs panel
 		inputsPanel = new JPanel();
 		sl_bodyPanel.putConstraint(SpringLayout.NORTH, inputsPanel, 10, SpringLayout.NORTH, bodyPanel);
@@ -137,26 +129,26 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		sl_bodyPanel.putConstraint(SpringLayout.EAST, inputsPanel, 421, SpringLayout.WEST, bodyPanel);
 		inputsPanel.setBackground(new Color(240, 94, 57));
 		bodyPanel.add(inputsPanel);
-		
+
 		//amount panel
 		amountPanel = new JPanel();
 		amountPanel.setBackground(new Color(243, 124, 95));
-		
+
 		//month panel
 		monthPanel = new JPanel();
 		monthPanel.setBackground(new Color(243, 124, 95));
 		monthPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		//month label
 		monthLabel = new JLabel("Month:");
 		monthLabel.setFont(new Font("Rockwell Condensed", Font.BOLD, 20));
 		monthPanel.add(monthLabel);
-		
+
 		//source panel
 		sourcePanel = new JPanel();
 		sourcePanel.setBackground(new Color(243, 124, 95));
 		sourcePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		//source label
 		sourceLabel = new JLabel("Source:");
 		sourceLabel.setFont(new Font("Rockwell Condensed", Font.BOLD, 20));
@@ -183,24 +175,24 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 						.addComponent(amountPanel, GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE))
 					.addContainerGap())
 		);
-		
+
 		sourceText = new JTextField();
 		sourceText.setMinimumSize(new Dimension(106, 20));
 		sourceText.setPreferredSize(new Dimension(106, 20));
 		sourcePanel.add(sourceText);
 		sourceText.setColumns(10);
-		
+
 		//month combo
 		monthCombo = new JComboBox(monthArray);
 		monthCombo.setPreferredSize(new Dimension(106, 20));
 		monthPanel.add(monthCombo);
 		amountPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		//amount label
 		amountLabel = new JLabel("Amount:");
 		amountLabel.setFont(new Font("Rockwell Condensed", Font.BOLD, 20));
 		amountPanel.add(amountLabel);
-		
+
 		//amount spinner
 		final double PRICE_MIN    = 0.0;    //price spinner minimum
 		final double PRICE_MAX    = 99999.99; //price spinner maximum
@@ -213,7 +205,7 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		amountSpinner.setEditor(new JSpinner.NumberEditor(amountSpinner, "00.00"));
 		amountPanel.add(amountSpinner);
 		inputsPanel.setLayout(gl_inputsPanel);
-		
+
 		//cancel button
 		cancelButton = new JButton("Cancel");
 		sl_bodyPanel.putConstraint(SpringLayout.NORTH, cancelButton, 6, SpringLayout.SOUTH, inputsPanel);
@@ -225,7 +217,7 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		cancelButton.setForeground(new Color(236, 70, 47));
 		bodyPanel.add(cancelButton);
 		cancelButton.addActionListener(this);
-		
+
 		//confirm button
 		confirmButton = new JButton("Confirm");
 		sl_bodyPanel.putConstraint(SpringLayout.NORTH, confirmButton, 6, SpringLayout.SOUTH, inputsPanel);
@@ -238,8 +230,8 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		bodyPanel.add(confirmButton);
 		confirmButton.addActionListener(this);
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
 		java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
 		System.out.println("Icon URL: " + iconURL);
 
@@ -262,14 +254,14 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 			wageObject.amount = (double) amountSpinner.getValue();
 			wageObject.Month  = (String) monthCombo.getSelectedItem();
 			wageObject.source = sourceText.getText();
-			
+
 			//update user object
 			userObject.addWage(wageObject);
 			updateMonthlySavings.updateSavings(userObject);
-			
+
 			this.dispose();
 			return;
 		}
-		
+
 	}
 }

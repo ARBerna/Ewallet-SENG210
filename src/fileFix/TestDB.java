@@ -1,4 +1,4 @@
-package fileFix;
+package src.fileFix;
 
 public class TestDB {
 

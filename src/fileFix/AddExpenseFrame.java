@@ -1,11 +1,26 @@
-package fileFix;
+package src.fileFix;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 
 public class AddExpenseFrame extends JFrame implements ActionListener {
 
@@ -42,7 +57,7 @@ public class AddExpenseFrame extends JFrame implements ActionListener {
 
         //setUndecorated(true);
         setResizable(false);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         // Window size
         setBounds(100, 100, 700, 260);
@@ -169,7 +184,7 @@ public class AddExpenseFrame extends JFrame implements ActionListener {
         confirmButton.setFont(new Font("Roboto Medium", Font.BOLD, 16));
         confirmButton.addActionListener(this);
         bodyPanel.add(confirmButton);
-        
+
         java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
 		System.out.println("Icon URL: " + iconURL);
 

@@ -1,7 +1,13 @@
-package fileFix;
+package src.fileFix;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridLayout;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 public class MainFrame extends JFrame {
 
@@ -19,7 +25,7 @@ public class MainFrame extends JFrame {
 
         setTitle("E-Wallet App");
         setSize(500, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         setLayout(new GridLayout(3, 1, 10, 10));
@@ -86,7 +92,7 @@ public class MainFrame extends JFrame {
 		} else {
 		    System.out.println("Icon not found");
 		}
-        
+
         setVisible(true);
     }
 

@@ -1,4 +1,4 @@
-package fileFix;
+package src.fileFix;
 
 public class DatabaseUser {
     private int userID;
@@ -22,32 +22,32 @@ public class DatabaseUser {
     }
 
     public int getUserID()
-    { 
-    	return userID; 
-    }
-    
-    public String getUsername() 
-    { 
-    	return username;
-    }
-    
-    public String getPasswordHash()
-    { 
-    	return passwordHash; 
-    }
-    
-    public String getEmail() 
-    { 
-    	return email; 
-    }
-    
-    public String getCreatedAt() 
-    { 
-    	return createdAt; 
+    {
+    	return userID;
     }
 
-    public void setUserID(int userID) 
-    { 
-    	this.userID = userID; 
+    public String getUsername()
+    {
+    	return username;
+    }
+
+    public String getPasswordHash()
+    {
+    	return passwordHash;
+    }
+
+    public String getEmail()
+    {
+    	return email;
+    }
+
+    public String getCreatedAt()
+    {
+    	return createdAt;
+    }
+
+    public void setUserID(int userID)
+    {
+    	this.userID = userID;
     }
 }

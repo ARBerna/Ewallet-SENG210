@@ -1,4 +1,4 @@
-package fileFix;
+package src.fileFix;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +11,7 @@ public class ExpenseDAO {
 	{
 		String sql = "INSERT INTO Expenses (UserID, Amount, Description, Date, Frequency, Source) "
 					+ "VALUES(?, ?, ?, ?, ?, ?)";
-		
+
 		try (Connection conn = Database.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(sql))
 		{
@@ -21,7 +21,7 @@ public class ExpenseDAO {
 			stmt.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
 			stmt.setInt(5, e.yearlyfrequency);
 			stmt.setString(6, e.source);
-			
+
 			int rows = stmt.executeUpdate();
 			return rows > 0;
 		}

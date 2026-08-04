@@ -1,10 +1,18 @@
-package fileFix;
+package src.fileFix;
 
-import javax.swing.*;
-import java.awt.*;
-import fileFix.User;
-import fileFix.DatabaseUser;
-import fileFix.UserDAO;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class AuthDialog extends JDialog {
 
@@ -50,8 +58,8 @@ public class AuthDialog extends JDialog {
 
         btnAction.addActionListener(e -> handleAuth());
         btnToggle.addActionListener(e -> toggleMode());
-        
-        java.net.URL iconURL = getClass().getResource("/fileFix/modified-noun-purse-3362985.png");
+
+        java.net.URL iconURL = getClass().getResource("modified-noun-purse-3362985.png");
 		System.out.println("Icon URL: " + iconURL);
 
 		if (iconURL != null) {
