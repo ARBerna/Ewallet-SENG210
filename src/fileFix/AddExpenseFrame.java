@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -206,22 +207,33 @@ public class AddExpenseFrame extends JFrame implements ActionListener {
 
         if (e.getSource() == confirmButton) {
 
-            expenseObject.amount = (double) amountSpinner.getValue();
+            
+        	int response = JOptionPane.showConfirmDialog(
+        		    null,           // parent frame/component (can be null)
+        		    "Are you sure you want to submit this expense?",  // message
+        		    "Confirm Submission",        // dialog title
+        		    JOptionPane.YES_NO_OPTION  // button options
+        		);
 
-            switch (freqCombo.getSelectedIndex()) {
-                case 0: expenseObject.yearlyfrequency = 1; break;   // Yearly
-                case 1: expenseObject.yearlyfrequency = 12; break;  // Monthly
-                case 2: expenseObject.yearlyfrequency = 24; break;  // Biweekly
-                case 3: expenseObject.yearlyfrequency = 0; break;   // One-time
-            }
+        		if (response == JOptionPane.YES_OPTION) 
+        		{
+        			expenseObject.amount = (double) amountSpinner.getValue();
 
-            expenseObject.source = sourceText.getText();
-            expenseObject.description = descriptionText.getText();
+                    switch (freqCombo.getSelectedIndex()) {
+                        case 0: expenseObject.yearlyfrequency = 1; break;   // Yearly
+                        case 1: expenseObject.yearlyfrequency = 12; break;  // Monthly
+                        case 2: expenseObject.yearlyfrequency = 24; break;  // Biweekly
+                        case 3: expenseObject.yearlyfrequency = 0; break;   // One-time
+                    }
 
-            ExpenseDAO.addExpense(expenseObject, userObject.userID);
-            updateMonthlySavings.updateSavings(userObject);
+                    expenseObject.source = sourceText.getText();
+                    expenseObject.description = descriptionText.getText();
 
-            this.dispose();
+                    ExpenseDAO.addExpense(expenseObject, userObject.userID);
+                    updateMonthlySavings.updateSavings(userObject);
+
+                    this.dispose();
+        		}
         }
     }
 }
