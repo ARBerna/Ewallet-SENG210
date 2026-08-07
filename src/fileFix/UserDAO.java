@@ -110,4 +110,21 @@ public class UserDAO {
 
 		return list;
 	}
+	
+	// Get username directly by its UserID integer
+	public static String getUsernameById(int userID) {
+		String sql = "SELECT Username FROM Users WHERE UserID = ?";
+		try (Connection conn = Database.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setInt(1, userID);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getString("Username");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "UnknownUser"; // Safe fallback string
+	}
+
 }

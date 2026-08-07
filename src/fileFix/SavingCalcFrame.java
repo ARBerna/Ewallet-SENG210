@@ -33,32 +33,37 @@ public class SavingCalcFrame extends JFrame {
 	private JList<PlannedPurchase> purchaseJList;
 	private JButton saveButton;
 	private PlannedPurchase selectedPurchase = null;
+	private String loggedInUsername;
 
 	private static class PlannedPurchase {
 		String id = UUID.randomUUID().toString();
 		String name;
 		double price;
+		String createdBy;
 
-		PlannedPurchase(String name, double price) {
+		PlannedPurchase(String name, double price, String loggedInUsername) {
 			this.name = name;
 			this.price = price;
+			this.createdBy = loggedInUsername;
 		}
 
 		// Constructor for reading entries of MySQL
-		PlannedPurchase(String id, String name, double price) {
+		PlannedPurchase(String id, String name, double price, String createdBy) {
 			this.id = id;
 			this.name = name;
 			this.price = price;
+			this.createdBy = createdBy;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("%s - $%.2f", name, price);
+			return String.format("%s - $%.2f (By: %s)", name, price, createdBy);
 		}
 	}
 
-	public SavingCalcFrame() {
-
+	public SavingCalcFrame(String loggedInUsername) {
+		this.loggedInUsername = loggedInUsername;
+		
 		setTitle("Savings Calculator");
 		setSize(700, 320); // Expanded frame width & height view layout
 		setLocationRelativeTo(null);
@@ -149,11 +154,13 @@ public class SavingCalcFrame extends JFrame {
 		// Pull saved data from MySQL
 		try (Connection conn = Database.getConnection()) {
 			if (conn != null) {
-				String selectQuery = "SELECT id, item_name, price FROM planned_purchases";
+				// Added created_by column to the select statement
+				String selectQuery = "SELECT id, item_name, price, created_by FROM planned_purchases";
 				try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(selectQuery)) {
 					while (rs.next()) {
+						// Reads created_by and forwards it to the database constructor overload
 						listModel.addElement(new PlannedPurchase(rs.getString("id"), rs.getString("item_name"),
-								rs.getDouble("price")));
+								rs.getDouble("price"), rs.getString("created_by")));
 					}
 				}
 			}
@@ -197,13 +204,66 @@ public class SavingCalcFrame extends JFrame {
 			}
 
 			if (selectedPurchase == null) {
-				listModel.addElement(new PlannedPurchase(name, price));
+				// Instantiate the object locally
+				PlannedPurchase newPurchase = new PlannedPurchase(name, price, this.loggedInUsername);
+
+				// --- DATABASE CREATE LAYER ---
+				try (Connection conn = Database.getConnection()) {
+					if (conn != null) {
+						String insertQuery = "INSERT INTO planned_purchases (id, item_name, price, created_by) VALUES (?, ?, ?, ?)";
+						try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
+							pstmt.setString(1, newPurchase.id);
+							pstmt.setString(2, newPurchase.name);
+							pstmt.setDouble(3, newPurchase.price);
+							pstmt.setString(4, newPurchase.createdBy);
+							pstmt.executeUpdate();
+
+							// Update visual list only if database write succeeds
+							listModel.addElement(newPurchase);
+						}
+					} else {
+						JOptionPane.showMessageDialog(this,
+								"Connection returned null. Verify your DB_PASSWORD variable.", "Database Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(this, "Save Failed: " + ex.getMessage(), "Database Error",
+							JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+					return;
+				}
 			} else {
-				selectedPurchase.name = name;
-				selectedPurchase.price = price;
-				purchaseJList.repaint();
-				selectedPurchase = null;
-				saveButton.setText("Save Plan");
+				// --- DATABASE UPDATE LAYER ---
+				try (Connection conn = Database.getConnection()) {
+					if (conn != null) {
+						// UPDATED: Optionally updates the owner column to the person who modified the
+						// item
+						String updateQuery = "UPDATE planned_purchases SET item_name = ?, price = ?, created_by = ? WHERE id = ?";
+						try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+							pstmt.setString(1, name);
+							pstmt.setDouble(2, price);
+							// Grab current operating user editing it
+							String currentEditor = System.getProperty("user.name");
+							pstmt.setString(3, currentEditor);
+							pstmt.setString(4, selectedPurchase.id);
+							pstmt.executeUpdate();
+
+							// Sync UI state
+							selectedPurchase.name = name;
+							selectedPurchase.price = price;
+							selectedPurchase.createdBy = currentEditor;
+							purchaseJList.repaint();
+							selectedPurchase = null;
+							saveButton.setText("Save Plan");
+						}
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(this, "Update Failed: " + ex.getMessage(), "Database Error",
+							JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+					return;
+				}
 			}
 			itemField.setText("");
 			priceSpinner.setValue(0.0);
