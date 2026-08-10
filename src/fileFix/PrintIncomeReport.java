@@ -21,10 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-
-public class PrintIncomeReport extends JFrame implements ActionListener{
-
+import javax.swing.border.EmptyBorder; class PrintIncomeReport extends JFrame implements ActionListener{
+	
 	private static final long serialVersionUID = 1L;
 	private JPanel IncomeReportPanel;
 
@@ -81,9 +79,15 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 			summary = "\nIndividual Incomes:\n";
 
 			for (Wage element : w) {
+				
+				if (element.Month == null || element.source == null) {
+					continue;
+				}
 
-				if     ((monthFilter.equals("All"))           || (element.Month  == monthFilter)) {
-					if ((sourceFilter.equals("All")) || (element.source == sourceFilter)) {
+				// FIX: Replaced identity comparison (==) with structural equivalence (.equals()) 
+				// to ensure dynamic records pulled from MySQL evaluate correctly against UI strings.
+				if     ((monthFilter.equals("All"))           || (element.Month.equals(monthFilter))) {
+					if ((sourceFilter.equals("All")) || (element.source.equals(sourceFilter))) {
 						//add to total and expIndex
 						total    += element.amount;
 						//add amount
@@ -164,14 +168,14 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 
 		ArrayList<Wage> w = u.getWages();
 
-		if (w.size() > 0) {
+		if (w != null && w.size() > 0) {
 			for (int i = 0; i < w.size(); i++) {
-				if (!sourcesAL.contains(w.get(i).source)) {
-					sourcesAL.add(w.get(i).source);
+				Wage current = w.get(i);
+				if (current != null && current.source != null && !sourcesAL.contains(current.source)) {
+					sourcesAL.add(current.source);
 				}
 			}
 		}
-
 		String[] sourcesArr = new String[sourcesAL.size() + 1];
 		sourcesArr[0] = "All";
 
@@ -184,6 +188,7 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 	/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public PrintIncomeReport(User u) {
 
 		actionU = u;
@@ -291,9 +296,11 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 		SummaryTextPane.setPreferredSize(new Dimension(390, 203));
 		SummaryPanel.add(SummaryTextPane);
 
-		SummaryText = new JTextArea(getSummary(u, (String) MonthComboBox.getSelectedItem(), (String) SourceComboBox.getSelectedItem()));
+		String initialMonth = (monthArray.length > 0) ? monthArray[0] : "All";
+		String initialSource = (sourceArray.length > 0) ? sourceArray[0] : "All";
+		SummaryText = new JTextArea(getSummary(u, initialMonth, initialSource));
 		SummaryTextPane.setViewportView(SummaryText);
-
+		
 		//add exit button
 		ExitButton = new JButton("Exit");
 		ExitButton.setBorderPainted(false);
@@ -320,7 +327,24 @@ public class PrintIncomeReport extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		//update summary when element (other than exit) is updated
 		if (e.getSource() != ExitButton) {
-			SummaryText.setText(getSummary(actionU, (String) MonthComboBox.getSelectedItem(), (String) SourceComboBox.getSelectedItem()));
+			
+			String selectedMonth = (String) MonthComboBox.getSelectedItem();
+			String selectedSource = (String) SourceComboBox.getSelectedItem();
+			actionU.getWages();
+			SourceComboBox.removeActionListener(this);
+			
+			String[] dynamicSources = getSources(actionU);
+			SourceComboBox.removeAllItems();
+			for (String src : dynamicSources) {
+				((javax.swing.DefaultComboBoxModel) SourceComboBox.getModel()).addElement(src);
+			}
+			
+			if (selectedSource != null) {
+				SourceComboBox.setSelectedItem(selectedSource);
+			}
+			SourceComboBox.addActionListener(this);
+			
+			SummaryText.setText(getSummary(actionU, selectedMonth, (String) SourceComboBox.getSelectedItem()));
 		}
 		else {
 			this.dispose();
