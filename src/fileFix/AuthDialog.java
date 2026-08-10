@@ -95,7 +95,7 @@ public class AuthDialog extends JDialog {
             if (UserDAO.validateLogin(username, password)) {
                 DatabaseUser dbUser = UserDAO.getUserByUsername(username);
 
-                // ⭐ FIXED: Pass userID into the GUI User object
+                // Pass userID into the GUI User object
                 User guiUser = new User(
                     dbUser.getUserID(),
                     dbUser.getUsername(),

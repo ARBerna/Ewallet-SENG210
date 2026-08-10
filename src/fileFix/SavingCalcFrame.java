@@ -3,6 +3,10 @@ package src.fileFix;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.UUID;
 
 import javax.swing.DefaultListModel;
@@ -29,32 +33,44 @@ public class SavingCalcFrame extends JFrame {
 	private JList<PlannedPurchase> purchaseJList;
 	private JButton saveButton;
 	private PlannedPurchase selectedPurchase = null;
+	private String loggedInUsername;
 
 	private static class PlannedPurchase {
 		String id = UUID.randomUUID().toString();
 		String name;
 		double price;
+		String createdBy;
 
-		PlannedPurchase(String name, double price) {
+		PlannedPurchase(String name, double price, String loggedInUsername) {
 			this.name = name;
 			this.price = price;
+			this.createdBy = loggedInUsername;
+		}
+
+		// Constructor for reading entries of MySQL
+		PlannedPurchase(String id, String name, double price, String createdBy) {
+			this.id = id;
+			this.name = name;
+			this.price = price;
+			this.createdBy = createdBy;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("%s - $%.2f", name, price);
+			return String.format("%s - $%.2f (By: %s)", name, price, createdBy);
 		}
 	}
 
-	public SavingCalcFrame() {
-
+	public SavingCalcFrame(String loggedInUsername) {
+		this.loggedInUsername = loggedInUsername;
+		
 		setTitle("Savings Calculator");
 		setSize(700, 320); // Expanded frame width & height view layout
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		//title panel
+		// title panel
 		JPanel titlePanel = new JPanel();
 		titlePanel.setBackground(Color.BLACK);
 
@@ -65,18 +81,18 @@ public class SavingCalcFrame extends JFrame {
 		titleLabel.setForeground(new Color(236, 70, 47));
 		titlePanel.add(titleLabel); // Fixed missing structural layout add
 
-		//border panel
+		// border panel
 		JPanel borderPanel = new JPanel();
 		borderPanel.setBackground(new Color(165, 27, 37));
 		borderPanel.setBounds(0, 49, 431, 7);
 
-		//body panel
+		// body panel
 		JPanel bodyPanel = new JPanel();
 		bodyPanel.setBackground(new Color(236, 70, 47));
 		bodyPanel.setLayout(null);
 
-		//itemfield
-		JLabel itemLabel = new JLabel ("Item:");
+		// itemfield
+		JLabel itemLabel = new JLabel("Item:");
 		itemLabel.setBounds(10, 20, 80, 25);
 		bodyPanel.add(itemLabel);
 
@@ -84,7 +100,7 @@ public class SavingCalcFrame extends JFrame {
 		itemField.setBounds(90, 20, 150, 25);
 		bodyPanel.add(itemField);
 
-		//itemprice spinner
+		// itemprice spinner
 		JLabel priceLabel = new JLabel("Price:");
 		priceLabel.setBounds(10, 50, 80, 20);
 		bodyPanel.add(priceLabel);
@@ -93,14 +109,14 @@ public class SavingCalcFrame extends JFrame {
 		priceSpinner.setBounds(90, 50, 150, 25);
 		bodyPanel.add(priceSpinner);
 
-		//Calculate button layout
+		// Calculate button layout
 		JButton calcButton = new JButton("Calculate");
 		calcButton.setBounds(10, 100, 110, 35);
 		calcButton.setBackground(Color.BLACK);
 		calcButton.setForeground(new Color(236, 70, 47));
 		bodyPanel.add(calcButton);
 
-		//Save/Add Button (Create/Update feature)
+		// Save/Add Button (Create/Update feature)
 		saveButton = new JButton("Save Plan");
 		saveButton.setBounds(130, 100, 110, 35);
 		saveButton.setBackground(Color.BLACK);
@@ -135,24 +151,44 @@ public class SavingCalcFrame extends JFrame {
 		deleteButton.setForeground(new Color(236, 70, 47));
 		bodyPanel.add(deleteButton);
 
-		//messgaedialog for button action
+		// Pull saved data from MySQL
+		try (Connection conn = Database.getConnection()) {
+			if (conn != null) {
+				// Added created_by column to the select statement
+				String selectQuery = "SELECT id, item_name, price, created_by FROM planned_purchases";
+				try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(selectQuery)) {
+					while (rs.next()) {
+						// Reads created_by and forwards it to the database constructor overload
+						listModel.addElement(new PlannedPurchase(rs.getString("id"), rs.getString("item_name"),
+								rs.getDouble("price"), rs.getString("created_by")));
+					}
+				}
+			}
+		} catch (Exception ex) {
+			System.err.println("Database failed: " + ex.getMessage());
+		}
+
+		// messgaedialog for button action
 		calcButton.addActionListener(e -> {
 			double price = (double) priceSpinner.getValue();
-			double monthlySaving = 500.0; //Hardcode amount
+			double monthlySaving = 500.0; // Hardcode amount
 			String item = itemField.getText();
 
-			//validate before calculating
-			if (monthlySaving <=0) {
+			// validate before calculating
+			if (monthlySaving <= 0) {
 				JOptionPane.showMessageDialog(this, "System savings not avaliable", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
-			//maybe integrate savings from noahs features monthsCalc
+			// maybe integrate savings from noahs features monthsCalc
 
 			double monthsCalc = price / monthlySaving;
 			long result = (long) Math.ceil(monthsCalc);
 
-			JOptionPane.showMessageDialog(this, "Item: " + item + "\nPrice: $" + price + "\nMonthly Savings: $" + monthlySaving + "\n\nYou will need " + result + " months to afford this.", "Savings Result", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this,
+					"Item: " + item + "\nPrice: $" + price + "\nMonthly Savings: $" + monthlySaving
+							+ "\n\nYou will need " + result + " months to afford this.",
+					"Savings Result", JOptionPane.INFORMATION_MESSAGE);
 
 		});
 
@@ -162,18 +198,72 @@ public class SavingCalcFrame extends JFrame {
 			double price = (double) priceSpinner.getValue();
 
 			if (name.isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Item name cannot be empty.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Item name cannot be empty.", "Validation Error",
+						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
 			if (selectedPurchase == null) {
-				listModel.addElement(new PlannedPurchase(name, price));
+				// Instantiate the object locally
+				PlannedPurchase newPurchase = new PlannedPurchase(name, price, this.loggedInUsername);
+
+				// --- DATABASE CREATE LAYER ---
+				try (Connection conn = Database.getConnection()) {
+					if (conn != null) {
+						String insertQuery = "INSERT INTO planned_purchases (id, item_name, price, created_by) VALUES (?, ?, ?, ?)";
+						try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
+							pstmt.setString(1, newPurchase.id);
+							pstmt.setString(2, newPurchase.name);
+							pstmt.setDouble(3, newPurchase.price);
+							pstmt.setString(4, newPurchase.createdBy);
+							pstmt.executeUpdate();
+
+							// Update visual list only if database write succeeds
+							listModel.addElement(newPurchase);
+						}
+					} else {
+						JOptionPane.showMessageDialog(this,
+								"Connection returned null. Verify your DB_PASSWORD variable.", "Database Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(this, "Save Failed: " + ex.getMessage(), "Database Error",
+							JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+					return;
+				}
 			} else {
-				selectedPurchase.name = name;
-				selectedPurchase.price = price;
-				purchaseJList.repaint();
-				selectedPurchase = null;
-				saveButton.setText("Save Plan");
+				// --- DATABASE UPDATE LAYER ---
+				try (Connection conn = Database.getConnection()) {
+					if (conn != null) {
+						// UPDATED: Optionally updates the owner column to the person who modified the
+						// item
+						String updateQuery = "UPDATE planned_purchases SET item_name = ?, price = ?, created_by = ? WHERE id = ?";
+						try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+							pstmt.setString(1, name);
+							pstmt.setDouble(2, price);
+							// Grab current operating user editing it
+							String currentEditor = System.getProperty("user.name");
+							pstmt.setString(3, currentEditor);
+							pstmt.setString(4, selectedPurchase.id);
+							pstmt.executeUpdate();
+
+							// Sync UI state
+							selectedPurchase.name = name;
+							selectedPurchase.price = price;
+							selectedPurchase.createdBy = currentEditor;
+							purchaseJList.repaint();
+							selectedPurchase = null;
+							saveButton.setText("Save Plan");
+						}
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(this, "Update Failed: " + ex.getMessage(), "Database Error",
+							JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+					return;
+				}
 			}
 			itemField.setText("");
 			priceSpinner.setValue(0.0);
@@ -183,7 +273,8 @@ public class SavingCalcFrame extends JFrame {
 		updateButton.addActionListener(e -> {
 			PlannedPurchase selected = purchaseJList.getSelectedValue();
 			if (selected == null) {
-				JOptionPane.showMessageDialog(this, "Please select an item from the list to modify.", "No Selection", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Please select an item from the list to modify.", "No Selection",
+						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			selectedPurchase = selected;
@@ -196,18 +287,34 @@ public class SavingCalcFrame extends JFrame {
 		deleteButton.addActionListener(e -> {
 			int selectedIndex = purchaseJList.getSelectedIndex();
 			if (selectedIndex == -1) {
-				JOptionPane.showMessageDialog(this, "Please select an item to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Please select an item to delete.", "No Selection",
+						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
 			PlannedPurchase selected = listModel.get(selectedIndex);
-			if (selectedPurchase != null && selectedPurchase.id.equals(selected.id)) {
-				selectedPurchase = null;
-				saveButton.setText("Save Plan");
-				itemField.setText("");
-				priceSpinner.setValue(0.0);
+
+			// DATABASE DELETE Execution
+			try (Connection conn = Database.getConnection()) {
+				if (conn != null) {
+					String deleteQuery = "DELETE FROM planned_purchases WHERE id = ?";
+					try (PreparedStatement pstmt = conn.prepareStatement(deleteQuery)) {
+						pstmt.setString(1, selected.id);
+						pstmt.executeUpdate();
+
+						if (selectedPurchase != null && selectedPurchase.id.equals(selected.id)) {
+							selectedPurchase = null;
+							saveButton.setText("Save Plan");
+							itemField.setText("");
+							priceSpinner.setValue(0.0);
+						}
+						listModel.remove(selectedIndex);
+					}
+				}
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Delete Failed: " + ex.getMessage(), "Database Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
-			listModel.remove(selectedIndex);
 		});
 
 		add(titlePanel, BorderLayout.NORTH);
@@ -217,10 +324,10 @@ public class SavingCalcFrame extends JFrame {
 		System.out.println("Icon URL: " + iconURL);
 
 		if (iconURL != null) {
-		    ImageIcon icon = new ImageIcon(iconURL);
-		    setIconImage(icon.getImage());
+			ImageIcon icon = new ImageIcon(iconURL);
+			setIconImage(icon.getImage());
 		} else {
-		    System.out.println("Icon not found");
+			System.out.println("Icon not found");
 		}
 
 		setVisible(true);

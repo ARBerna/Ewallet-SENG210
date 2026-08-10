@@ -39,7 +39,9 @@ public class MainFrame extends JFrame {
         JButton addExpenseButton = new JButton("Add Expense");
 
         savingBtn.addActionListener(e -> {
-            SwingUtilities.invokeLater(SavingCalcFrame::new);
+        	SwingUtilities.invokeLater(() -> {
+        		new SavingCalcFrame(actionU.username).setVisible(true);
+        	});
         });
 
         currencyConversion.addActionListener(e -> {
