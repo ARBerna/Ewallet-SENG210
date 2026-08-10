@@ -45,31 +45,10 @@ public class PrintExpenseReport extends JFrame implements ActionListener{
 	static User actionU;
 	private JScrollPane SummaryScrollPane;
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					//User u = new User("User", "Pass");
-					Expense expense = new Expense("test", 10.0, 1);
-					//u.addExpense(expense);
-					Expense expense2 = new Expense("test1", 11.0, 12);
-					//u.addExpense(expense2);
-					Expense expense3 = new Expense("test2", 10.5, 24);
-					//u.addExpense(expense3);
-					//PrintExpenseReport frame = new PrintExpenseReport(u);
-					//frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	//get the summary as a text string
 	//also includes filtering, 0 is all for yearlyfrequency, "all" is all for source
-	private static String getSummary (User u, int freqFilter, String sourceFilter) {
-
+	private static String getSummary (User u, int freqFilter, String sourceFilter) 
+	{
 		actionU = u;
 		double total         = 0;
 		double totalYear     = 0;

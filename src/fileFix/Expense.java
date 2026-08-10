@@ -1,16 +1,16 @@
-//adding a comment for testing -
 package src.fileFix;
 
-public class Expense {
+public class Expense 
+{
 	String source;
 	double amount;
 	int yearlyfrequency; //1 for 1 time or once a year, 12 for monthly or or 24 for biweekly
-	//should add contructor(s)
 	String description;
 
-	public Expense(String tempSource, double tempAmount, int tempYearlyFrequency) {
-		this.source			= tempSource;
-		this.amount 			= tempAmount;
-		this.yearlyfrequency = tempYearlyFrequency;
+	public Expense(String source, double amount, int yearlyFrequency) 
+	{
+		this.source	= source;
+		this.amount = amount;
+		this.yearlyfrequency = yearlyFrequency;
 	}
 }

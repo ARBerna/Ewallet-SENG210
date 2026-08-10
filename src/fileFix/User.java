@@ -1,4 +1,8 @@
 package src.fileFix;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class User {
@@ -37,8 +41,42 @@ public class User {
 	}
 
 	//get the list of expenses
-	public ArrayList<Expense> getExpenses() {
+	public ArrayList<Expense> getExpenses() 
+	{
+		Spending = GetSpendingFromDatabase();
+			
+		System.out.println("Got spending from DB");
+			
 		return Spending;
+	}
+	
+	public ArrayList<Expense> GetSpendingFromDatabase()
+	{
+		ArrayList <Expense> tempSpending = new ArrayList<>();
+		
+		String sql = "SELECT * FROM expenses WHERE UserID = ?";
+		
+		try (Connection conn = Database.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql))
+		{
+			stmt.setInt(1, this.userID);
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next())
+			{
+				Expense e = new Expense(rs.getString("Source"), rs.getDouble("Amount"), rs.getInt("Frequency"));
+				
+				tempSpending.add(e);
+				
+				System.out.println("Source: " + e.source + " Amount: " + e.amount + " Frequency: " + e.yearlyfrequency);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return tempSpending;
 	}
 
 	//adds wage to incomes
