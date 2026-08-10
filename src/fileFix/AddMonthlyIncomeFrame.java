@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.sql.DriverManager;
+import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -58,8 +60,8 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 
 		//setUndecorated(true);
 		setResizable(false);
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setBounds(100, 100, 431, 190);
+setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+setBounds(100, 100, 431, 260);
 		addIncomePanel = new JPanel();
 		addIncomePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(addIncomePanel);
@@ -254,27 +256,30 @@ public class AddMonthlyIncomeFrame extends JFrame implements ActionListener {
 		{
 			
 			
-			int response = JOptionPane.showConfirmDialog(
-				    null,         
-				    "Are you sure you want to submit this Income?",  
-        		    "Confirm Submission",
-				    JOptionPane.YES_NO_OPTION  // button options
-				);
+int response = JOptionPane.showConfirmDialog(
+		    null,         
+		    "Are you sure you want to submit this Income?",  
+    	    "Confirm Submission",
+		    JOptionPane.YES_NO_OPTION  // button options
+		);
 
-				if (response == JOptionPane.YES_OPTION) 
-				{
-					//update wage object
-					wageObject.amount = (double) amountSpinner.getValue();
-					wageObject.Month  = (String) monthCombo.getSelectedItem();
-					wageObject.source = sourceText.getText();
+		if (response == JOptionPane.YES_OPTION) 
+		{
+			// update wage object
+			wageObject.amount = (double) amountSpinner.getValue();
+			wageObject.Month  = (String) monthCombo.getSelectedItem();
+			wageObject.source = sourceText.getText();
 
-					//update user object
-					userObject.addWage(wageObject);
-					updateMonthlySavings.updateSavings(userObject);
+			// persist to DB
+			IncomeDAO.addIncome(wageObject, userObject.userID);
 
-					this.dispose();
-					return;
-				}
+			// update user object and savings
+			userObject.addWage(wageObject);
+			updateMonthlySavings.updateSavings(userObject);
+
+			this.dispose();
+			return;
+		}
 		}
 
 	}
