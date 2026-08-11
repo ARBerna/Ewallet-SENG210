@@ -155,12 +155,12 @@ public class SavingCalcFrame extends JFrame {
 		try (Connection conn = Database.getConnection()) {
 			if (conn != null) {
 				// Added created_by column to the select statement
-				String selectQuery = "SELECT id, item_name, price, created_by FROM planned_purchases";
+				String selectQuery = "SELECT GoalID, itemName, Price, UserID FROM savingsgoals";
 				try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(selectQuery)) {
 					while (rs.next()) {
 						// Reads created_by and forwards it to the database constructor overload
-						listModel.addElement(new PlannedPurchase(rs.getString("id"), rs.getString("item_name"),
-								rs.getDouble("price"), rs.getString("created_by")));
+						listModel.addElement(new PlannedPurchase(rs.getString("GoalID"), rs.getString("itemName"),
+								rs.getDouble("Price"), rs.getString("UserID")));
 					}
 				}
 			}
@@ -210,12 +210,12 @@ public class SavingCalcFrame extends JFrame {
 				// --- DATABASE CREATE LAYER ---
 				try (Connection conn = Database.getConnection()) {
 					if (conn != null) {
-						String insertQuery = "INSERT INTO planned_purchases (id, item_name, price, created_by) VALUES (?, ?, ?, ?)";
+						String insertQuery = "INSERT INTO savingsgoals (GoalID, UserID, itemName, Price) VALUES (?, ?, ?, ?)";
 						try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
 							pstmt.setString(1, newPurchase.id);
-							pstmt.setString(2, newPurchase.name);
-							pstmt.setDouble(3, newPurchase.price);
-							pstmt.setString(4, newPurchase.createdBy);
+							pstmt.setString(2, newPurchase.createdBy);
+							pstmt.setString(3, newPurchase.name);
+							pstmt.setDouble(4, newPurchase.price);
 							pstmt.executeUpdate();
 
 							// Update visual list only if database write succeeds
@@ -239,20 +239,17 @@ public class SavingCalcFrame extends JFrame {
 					if (conn != null) {
 						// UPDATED: Optionally updates the owner column to the person who modified the
 						// item
-						String updateQuery = "UPDATE planned_purchases SET item_name = ?, price = ?, created_by = ? WHERE id = ?";
+						String updateQuery = "UPDATE savingsgoals SET ItemName = ?, Price = ?, UserID = ? WHERE GoalID = ?";
 						try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
 							pstmt.setString(1, name);
 							pstmt.setDouble(2, price);
-							// Grab current operating user editing it
-							String currentEditor = System.getProperty("user.name");
-							pstmt.setString(3, currentEditor);
+							pstmt.setString(3, this.loggedInUsername);
 							pstmt.setString(4, selectedPurchase.id);
 							pstmt.executeUpdate();
-
 							// Sync UI state
 							selectedPurchase.name = name;
 							selectedPurchase.price = price;
-							selectedPurchase.createdBy = currentEditor;
+							selectedPurchase.createdBy = this.loggedInUsername;
 							purchaseJList.repaint();
 							selectedPurchase = null;
 							saveButton.setText("Save Plan");
@@ -297,7 +294,7 @@ public class SavingCalcFrame extends JFrame {
 			// DATABASE DELETE Execution
 			try (Connection conn = Database.getConnection()) {
 				if (conn != null) {
-					String deleteQuery = "DELETE FROM planned_purchases WHERE id = ?";
+					String deleteQuery = "DELETE FROM savingsgoals WHERE GoalID = ?";
 					try (PreparedStatement pstmt = conn.prepareStatement(deleteQuery)) {
 						pstmt.setString(1, selected.id);
 						pstmt.executeUpdate();
