@@ -34,6 +34,7 @@ public class SavingCalcFrame extends JFrame {
 	private JButton saveButton;
 	private PlannedPurchase selectedPurchase = null;
 	private String loggedInUsername;
+	private int loggedInUserId;
 
 	private static class PlannedPurchase {
 		String id = UUID.randomUUID().toString();
@@ -63,6 +64,14 @@ public class SavingCalcFrame extends JFrame {
 
 	public SavingCalcFrame(String loggedInUsername) {
 		this.loggedInUsername = loggedInUsername;
+		
+		// Convert the username string name to its proper database integer ID
+		DatabaseUser dbUser = UserDAO.getUserByUsername(loggedInUsername);
+		
+		if (dbUser != null) {
+			
+			this.loggedInUserId = dbUser.getUserID(); 
+		}
 		
 		setTitle("Savings Calculator");
 		setSize(700, 320); // Expanded frame width & height view layout
@@ -154,13 +163,20 @@ public class SavingCalcFrame extends JFrame {
 		// Pull saved data from MySQL
 		try (Connection conn = Database.getConnection()) {
 			if (conn != null) {
-				// Added created_by column to the select statement
-				String selectQuery = "SELECT GoalID, itemName, Price, UserID FROM savingsgoals";
-				try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(selectQuery)) {
-					while (rs.next()) {
-						// Reads created_by and forwards it to the database constructor overload
-						listModel.addElement(new PlannedPurchase(rs.getString("GoalID"), rs.getString("itemName"),
-								rs.getDouble("Price"), rs.getString("UserID")));
+				// Query filters by the resolved integer ID
+				String selectQuery = "SELECT GoalID, ItemName, Price, UserID FROM savingsgoals WHERE UserID = ?";
+				try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
+					pstmt.setInt(1, this.loggedInUserId);
+					try (ResultSet rs = pstmt.executeQuery()) {
+						while (rs.next()) {
+							// Display the string name in the list view using your original toString() flow
+							listModel.addElement(new PlannedPurchase(
+								rs.getString("GoalID"), 
+								rs.getString("ItemName"),
+								rs.getDouble("Price"), 
+								this.loggedInUsername
+							));
+						}
 					}
 				}
 			}
@@ -210,10 +226,10 @@ public class SavingCalcFrame extends JFrame {
 				// --- DATABASE CREATE LAYER ---
 				try (Connection conn = Database.getConnection()) {
 					if (conn != null) {
-						String insertQuery = "INSERT INTO savingsgoals (GoalID, UserID, itemName, Price) VALUES (?, ?, ?, ?)";
+						String insertQuery = "INSERT INTO savingsgoals (GoalID, UserID, ItemName, Price) VALUES (?, ?, ?, ?)";
 						try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
 							pstmt.setString(1, newPurchase.id);
-							pstmt.setString(2, newPurchase.createdBy);
+							pstmt.setInt(2, this.loggedInUserId);
 							pstmt.setString(3, newPurchase.name);
 							pstmt.setDouble(4, newPurchase.price);
 							pstmt.executeUpdate();
@@ -237,13 +253,13 @@ public class SavingCalcFrame extends JFrame {
 				// --- DATABASE UPDATE LAYER ---
 				try (Connection conn = Database.getConnection()) {
 					if (conn != null) {
-						// UPDATED: Optionally updates the owner column to the person who modified the
+						// Optionally updates the owner column to the person who modified the
 						// item
 						String updateQuery = "UPDATE savingsgoals SET ItemName = ?, Price = ?, UserID = ? WHERE GoalID = ?";
 						try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
 							pstmt.setString(1, name);
 							pstmt.setDouble(2, price);
-							pstmt.setString(3, this.loggedInUsername);
+							pstmt.setInt(3, this.loggedInUserId);
 							pstmt.setString(4, selectedPurchase.id);
 							pstmt.executeUpdate();
 							// Sync UI state
