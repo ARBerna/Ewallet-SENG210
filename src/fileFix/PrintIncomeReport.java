@@ -9,6 +9,9 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,7 +24,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder; class PrintIncomeReport extends JFrame implements ActionListener{
+import javax.swing.border.EmptyBorder; 
+
+public class PrintIncomeReport extends JFrame implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel IncomeReportPanel;
@@ -64,6 +69,7 @@ import javax.swing.border.EmptyBorder; class PrintIncomeReport extends JFrame im
 
 	//get the summary as a text string
 	//also includes filtering, 0 is all for yearlyfrequency, "all" is all for source
+	//also includes filtering, 0 is all for yearlyfrequency, "all" is all for source
 	public static String getSummary (User u, String monthFilter, String sourceFilter) {
 
 		actionU = u;
@@ -84,8 +90,7 @@ import javax.swing.border.EmptyBorder; class PrintIncomeReport extends JFrame im
 					continue;
 				}
 
-				// FIX: Replaced identity comparison (==) with structural equivalence (.equals()) 
-				// to ensure dynamic records pulled from MySQL evaluate correctly against UI strings.
+				// dynamic records pulled from MySQL 
 				if     ((monthFilter.equals("All"))           || (element.Month.equals(monthFilter))) {
 					if ((sourceFilter.equals("All")) || (element.source.equals(sourceFilter))) {
 						//add to total and expIndex
@@ -193,6 +198,24 @@ import javax.swing.border.EmptyBorder; class PrintIncomeReport extends JFrame im
 
 		actionU = u;
 
+		// --- DATABASE SYNC LAYER ---
+		try (Connection conn = Database.getConnection()) {
+			if (conn != null) {
+				String selectQuery = "SELECT IncomeID, UserID, Amount, Source, Month FROM Income WHERE UserID = '" + u.username + "'";
+				try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(selectQuery)) {
+					while (rs.next()) {
+						Wage importedWage = new Wage(
+							rs.getString("Source"),
+							rs.getDouble("Amount"),
+							rs.getString("Month")
+						);
+						u.addWage(importedWage);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			System.err.println("Database failed to load income report: " + ex.getMessage());
+		}
 		//make arrays
 		String[] monthArray = new String[13];
 		monthArray[0]  = "All";
